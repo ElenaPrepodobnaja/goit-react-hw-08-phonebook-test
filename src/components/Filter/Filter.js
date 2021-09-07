@@ -1,29 +1,31 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 
-import addFilter from 'redux/contacts/contacts-action';
-import s from './Filter.module.css';
-import { getFilter } from 'redux/contacts/contacts-selectors';
+import { contactsSelectors, filterContacts } from 'redux/contacts';
 
-const Filter = () => {
+function Filter() {
+  const filter = useSelector(contactsSelectors.getFilter);
   const dispatch = useDispatch();
-  const value = useSelector(getFilter);
 
-  const onChange = e => dispatch(addFilter(e.currentTarget.value));
+  const onFilter = e => dispatch(filterContacts(e.target.value));
 
   return (
-    <label htmlFor="search" className={s.Search__box}>
-      <p className={s.search__label}>Find contacts by name:</p>
+    <>
       <input
-        className={s.search__input}
-        type="search"
-        name="search"
-        id="search"
-        onChange={onChange}
-        value={value}
+        type="text"
+        name="filter"
+        value={filter}
+        placeholder="Поиск по имени ..."
+        onChange={onFilter}
+        autoComplete="off"
       />
-    </label>
+    </>
   );
+}
+
+Filter.propTypes = {
+  filter: PropTypes.string,
+  onFilter: PropTypes.func,
 };
 
 export default Filter;

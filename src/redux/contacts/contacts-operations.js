@@ -1,48 +1,35 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
-axios.defaults.baseURL = 'http://localhost:4040';
+axios.defaults.baseURL = 'https://goit-phonebook-api.herokuapp.com';
 
 export const fetchContacts = createAsyncThunk(
   'contacts/fetchContacts',
-  async (_, { rejectWithValue }) => {
-    try {
-      const { data } = await axios.get('/contacts?_sort=id&_order=desc');
-      return data;
-    } catch (error) {
-      return rejectWithValue(error);
-    }
+  async () => {
+    const response = await axios.get('/contacts');
+    return response.data;
   },
 );
 
 export const addContact = createAsyncThunk(
   'contacts/addContact',
-  async (user, { rejectWithValue }) => {
-    const contact = {
-      name: user.name,
-      number: user.number,
-      id: uuidv4(),
-    };
-    try {
-      await axios.post('/contacts', contact);
-      return contact;
-    } catch (error) {
-      return rejectWithValue(error);
-    }
+  async contact => {
+    const response = await axios.post('/contacts', contact);
+    return response.data;
   },
 );
 
 export const deleteContact = createAsyncThunk(
   'contacts/deleteContact',
-  async (id, { rejectWithValue }) => {
-    try {
-      await axios.delete(`/contacts/${id}`);
-      return id;
-    } catch (error) {
-      return rejectWithValue(error);
-    }
+  async id => {
+    await axios.delete(`/contacts/${id}`);
+    return id;
   },
 );
 
-export default { deleteContact, addContact, fetchContacts };
+const contactsOperations = {
+  fetchContacts,
+  addContact,
+  deleteContact,
+};
+export default contactsOperations;
